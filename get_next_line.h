@@ -5,16 +5,16 @@
 ** Login   <peau_c@epitech.net>
 **
 ** Started on  Tue Dec 29 13:11:46 2015
-** Last update Tue Jan  5 22:46:15 2016 
+** Last update Thu Jan  7 13:47:31 2016 
 */
 
 
 #ifndef _GET_NEXT_LINE_
 # define _GET_NEXT_LINE_
 
-# ifndef READ_SIZE
+# ifndef _READ_SIZE_
 #  define READ_SIZE 10
-# endif /* READ_SIZE */
+# endif /* _READ_SIZE_ */
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -22,6 +22,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <string.h>
+
 char *get_next_line(const int );
 
 #endif /* _GET_NEXT_LINE_ */
