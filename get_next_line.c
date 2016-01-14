@@ -5,7 +5,7 @@
 ** Login   <peau_c@epitech.net>
 **
 ** Started on  Tue Dec 29 13:19:17 2015
-** Last update Fri Jan  8 13:57:32 2016 
+** Last update Thu Jan 14 09:32:15 2016 
 */
 
 #include "get_next_line.h"
@@ -37,11 +37,10 @@ char	*my_realloc(char *str, int buffsize, int nbr)
   int	i;
 
   i = -1;
-  tmp = malloc(READ_SIZE * nbr + 1);
-  while (++i != READ_SIZE * nbr)
+  tmp = malloc(10 * nbr + 1);
+  while (++i != 10 * nbr)
     tmp[i] = 0;
   my_strncat(tmp, str, my_strlen(str), 0);
-
   return (tmp);
 }
 
@@ -52,7 +51,7 @@ static char	*check_n(char *str, char* stat)
 
   j = 0;
   i = 0;
-  stat[READ_SIZE] = 0;
+  stat[10] = 0;
   while (str[i] != 0)
     {
       if (str[i] == 10)
@@ -81,13 +80,13 @@ char		*get_next_line(const int fd)
   int		readed;
 
   i = 1;
-  buff[READ_SIZE] = 0;
+  buff[10] = 0;
   str = malloc(READ_SIZE + 1);
   str[0] = 0;
   str[READ_SIZE] = 0;
   if (buff[0] != 0 && (i++) && (i++))
     my_strncat(str, buff, my_strlen(buff), 0);
-  while ((readed = read(fd, buff, READ_SIZE)) != 0)
+  while (buff[i] != 32 && (readed = read(fd, buff, READ_SIZE)) != 0)
     {
       /* printf("buff = %s\n", buff); */
       my_strncat(str, buff, readed, my_strlen(str));
