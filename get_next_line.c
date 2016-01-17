@@ -1,101 +1,91 @@
 /*
-** get_next_line.c for gnlc in /home/peau_c/rendu/CPE/GNL/CPE_2015_getnextline
+** get_next_line.c for getnextline in /home/peau_c/rendu/CPE/GNL/CPE_2015_getne
 **
 ** Made by
 ** Login   <peau_c@epitech.net>
-**
-** Started on  Tue Dec 29 13:19:17 2015
-** Last update Thu Jan 14 09:32:15 2016 
+m**
+** Started on  Thu Jan 14 19:21:38 2016
+** Last update Sun Jan 17 15:43:46 2016 Clement Peau
 */
 
 #include "get_next_line.h"
 
-int	my_strlen(char *str)
+char	*my_strcat(char *dest, char *src, int l)
 {
   int	i;
+  int	j;
 
   i = 0;
-  while (str[i++] != 0);
-  return (i - 1);
+  j = 0;
+  while (dest[i] != 0)
+  i++;
+  while (src[j] != 0)
+    {
+      /* printf("--%d--dest[%d] = %c && src[%d] = %c\n", __LINE__, i, dest[i], j, src[j]); */
+      dest[i] = src[j];
+      if (l == 1)
+	printf("--%d--dest[%d] = %c && src[%d] = %c\n", __LINE__, i, dest[i], j, src[j]);
+      i++;
+      j++;
+    }
+  if (l == 1)
+    printf("--%d--i a la fin de la boucle = %d\n", __LINE__, i);
+  dest[i] = 0;
+  return (dest);
 }
 
-void	my_strncat(char *dest, char *src, int chars, int pos)
+char	*my_realloc(char *str, int boucle)
+{
+  char	*new;
+
+  printf("--%d-- Malloc = %d\n",  __LINE__, READ_SIZE * boucle);
+  /* printf("--%d-- &str = %p\n",  __LINE__, str); */
+  new = malloc(READ_SIZE * boucle + 1);
+  new[0] = 0;
+  if (boucle != 1)
+    {
+      new = my_strcat(new, str, 0);
+      free(str);
+    }
+  return (new);
+}
+
+char	*check(char *str, char *buffer)
 {
   int	i;
-  int	tmp;
-
-  tmp = pos;
-  i = 0;
-  while (tmp < chars + pos)
-      dest[tmp++] = src[i++];
-  dest[tmp] = 0;
-}
-
-char	*my_realloc(char *str, int buffsize, int nbr)
-{
-  char	*tmp;
-  int	i;
-
-  i = -1;
-  tmp = malloc(10 * nbr + 1);
-  while (++i != 10 * nbr)
-    tmp[i] = 0;
-  my_strncat(tmp, str, my_strlen(str), 0);
-  return (tmp);
-}
-
-static char	*check_n(char *str, char* stat)
-{
-  int		i;
-  int		j;
+  int	j;
 
   j = 0;
   i = 0;
-  stat[10] = 0;
-  while (str[i] != 0)
+  while (str[i++] != 0)
     {
       if (str[i] == 10)
-	while (str[i] != 0)
-	  {
-	    if (str[i] != 10)
-	      {
-		stat[j++] = str[i];
-		str[i] = 0;
-	      }
-	    str[i++] = 0;
-	  }
-      i++;
+	while ((str[i] != 0) && (buffer[j++] = str[i]) && (str[i++] = 0));
     }
-  stat[j] = 0;
-  /* printf("str = %s\n", str); */
-  /* printf("str = %s\n\n", str); */
-  return (stat);
+  buffer[j] = 0;
+  printf("--%d");
+}
+char	*is_filled(char *str, char *buff)
+{
+
 }
 
-char		*get_next_line(const int fd)
+char	*get_next_line(int fd)
 {
-  static char	buff[READ_SIZE + 1];
+  static	char	buff[READ_SIZE + 1];
   char		*str;
   int		i;
-  int		readed;
 
   i = 1;
-  buff[10] = 0;
-  str = malloc(READ_SIZE + 1);
-  str[0] = 0;
-  str[READ_SIZE] = 0;
-  if (buff[0] != 0 && (i++) && (i++))
-    my_strncat(str, buff, my_strlen(buff), 0);
-  while (buff[i] != 32 && (readed = read(fd, buff, READ_SIZE)) != 0)
+  buff[READ_SIZE] = 0;
+  while (read(fd, buff, READ_SIZE) != 0)
     {
-      /* printf("buff = %s\n", buff); */
-      my_strncat(str, buff, readed, my_strlen(str));
-      str = my_realloc(str, READ_SIZE, i++);
-      if (check_n(str, buff) == NULL || buff[0] != 0)
-      	return (str);
-      }
-  if (str[0] != 0)
-    return (str);
-  if (readed == 0 && buff[0] == 0)
-    return (NULL);
+      str = my_realloc(str, i++);
+      printf("--%d--boucle str = %s\n", __LINE__, str);
+      printf("--%d--boucle buff = %s\n", __LINE__, buff);
+      my_strcat(str, buff, 1);
+    }
+  check(str, buff);
+  printf("--%d--buff = %s", __LINE__, buff);
+  return (str);
 }
