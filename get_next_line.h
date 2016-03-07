@@ -5,7 +5,7 @@
 ** Login   <peau_c@epitech.net>
 **
 ** Started on  Tue Dec 29 13:11:46 2015
-** Last update Fri Jan  8 14:02:09 2016 
+** Last update Fri Jan 29 19:14:20 2016 Clement Peau
 */
 
 
@@ -13,7 +13,7 @@
 # define _GET_NEXT_LINE_
 
 # ifndef _READ_SIZE_
-#  define READ_SIZE 10
+#  define READ_SIZE 3
 # endif /* _READ_SIZE_ */
 
 # include <unistd.h>
