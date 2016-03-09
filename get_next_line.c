@@ -1,92 +1,90 @@
 /*
-** get_next_line.c for gnlc in /home/peau_c/rendu/CPE/GNL/CPE_2015_getnextline
+** get_next_line.c for get_next_line.h in /home/peau_c/rendu/CPE/GNL/CPE_
 **
-** Made by
+** Made by Clement Peau
 ** Login   <peau_c@epitech.net>
 **
-** Started on  Tue Dec 29 13:19:17 2015
-** Last update Sun Jan 17 23:03:21 2016 Clement Peau
+** Started on  Tue Mar  8 18:40:35 2016 Clement Peau
+** Last update Wed Mar  9 14:30:49 2016 Clement Peau
 */
 
 #include "get_next_line.h"
 
-int			my_strncat(char *dest, char *src)
+void	my_strcpy(char *dest, char *src)
 {
-  int			i;
-  int			j;
+  int	i;
 
-  j = -1;
   i = 0;
-  while (dest[++j] != 0);
-    while (src[i] != 0)
-    dest[j++] = src[i++];
-  dest[j] = 0;
+  while (src[i])
+    {
+      dest[i] = src[i];
+      i++;
+    }
+  dest[i] = 0;
+}
+
+int	is_there_a_n(char *str, char *buff)
+{
+  int	i;
+  int	j;
+
+  j = 0;
+  while (str[j] && j++);
+  i = 0;
+  printf("%p -> %s\n", buff, buff);
+  while (buff[i] != 0)
+    {
+      str[j] = buff[i];
+      if (buff[i++] == 10)
+      	{
+	  str[j] = 0;
+	  my_strcpy(buff, buff + i);
+	  printf("is_there_a_n -> %s\n", str);
+	  printf("is_there_a_n -> 1\n");
+	  printf("sortie %s\n", buff);
+      	  return (1);
+      	}
+      j++;
+    }
+  str[j] = 0;
+  printf("sortie %s\n", buff);
+  printf("is_there_a_n -> 0\n");
   return (0);
 }
 
-char			*my_realloc(char *str, int nbr)
+char	*my_realloc(char *str)
 {
-  char			*tmp;
-  int			i;
+  int	i;
+  char	*new_str;
 
-  i = -1;
-  if ((tmp = malloc(READ_SIZE * nbr + 1)) == NULL)
+  while (str[i++]);
+  if ((new_str = malloc(i + READ_SIZE)) == NULL)
     return (NULL);
-  tmp[0] = 0;
-  if (nbr > 1)
-    {
-      my_strncat(tmp, str);
-      free(str);
-    }
-  tmp[READ_SIZE * nbr] = 0;
-  return (tmp);
-}
-
-static char		*check_n(char *str, char* stat)
-{
-  int		i;
-  int		j;
-
-  j = 0;
   i = 0;
-  while (str[i++] != 0)
-    if (str[i] == 10)
-      while (str[i] != 0)
-	{
-	  if (str[i] != 10)
-	    {
-	      stat[j++] = str[i];
-	      str[i] = 0;
-	    }
-	  str[i++] = 0;
-	}
-  stat[j] = 0;
-  return (NULL);
+  while (str[i])
+    {
+      new_str[i] = str[i];
+      i++;
+    }
 }
 
-char			*get_next_line(const int fd)
+char	*get_next_line(const int fd)
 {
-  static char		buff[READ_SIZE + 1];
-  char			*str;
-  int			i;
-  static int		readed;
+  char		*str;
+  static char	buff[READ_SIZE + 1];
+  int		readed;
 
-  i = 1;
   buff[READ_SIZE] = 0;
-  if ((str = my_realloc(str, i)) == NULL)
+  if ((str = malloc((READ_SIZE + 1) * sizeof(char))) == NULL)
     return (NULL);
-  if (buff[0] != 0 && (i++) && (i++) && my_strncat(str, buff));
-  while ((readed = read(fd, buff, READ_SIZE)) != 0)
+  str[0] = 0;
+  while ((readed = read(fd, buff, READ_SIZE)) > 1)
     {
-      if (readed < READ_SIZE && (buff[readed] = 0));
-	my_strncat(str, buff);
-      if ((str = my_realloc(str, ++i)) == NULL)
-	return (NULL);
-      if ((check_n(str, buff) != NULL) || buff[0] != 0)
-      	return (str);
+      printf("buff = %s\n", buff);
+      printf("je passe\n");
+      if (is_there_a_n(str, buff) == 1)
+	break ;
+      my_realloc(str);
     }
-  if (str[0] != 0)
-    return (str);
-  if (readed == 0 && buff[0] == 0)
-    return (NULL);
+  return (str);
 }
