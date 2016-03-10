@@ -5,60 +5,76 @@
 ** Login   <peau_c@epitech.net>
 **
 ** Started on  Tue Mar  8 18:40:35 2016 Clement Peau
-** Last update Wed Mar  9 14:30:49 2016 Clement Peau
+** Last update Thu Mar 10 15:58:54 2016 Clement Peau
 */
 
 #include "get_next_line.h"
 
-void	my_strcpy(char *dest, char *src)
-{
-  int	i;
-
-  i = 0;
-  while (src[i])
-    {
-      dest[i] = src[i];
-      i++;
-    }
-  dest[i] = 0;
-}
-
-int	is_there_a_n(char *str, char *buff)
+int	push_back(char *str)
 {
   int	i;
   int	j;
 
   j = 0;
-  while (str[j] && j++);
   i = 0;
-  printf("%p -> %s\n", buff, buff);
-  while (buff[i] != 0)
+  while (str[i] != 0 && str[i] != 10)
+      i++;
+  if (str[i] == 0)
     {
-      str[j] = buff[i];
-      if (buff[i++] == 10)
-      	{
-	  str[j] = 0;
-	  my_strcpy(buff, buff + i);
-	  printf("is_there_a_n -> %s\n", str);
-	  printf("is_there_a_n -> 1\n");
-	  printf("sortie %s\n", buff);
-      	  return (1);
-      	}
+      str[0] = 0;
+      return (1);
+    }
+  if (str[i] == 10)
+    {
+      i++;
+      while (str[i] != 0)
+	str[j++] = str[i++];
+      return (0);
+    }
+}
+
+void	my_strcpy(char *dest, char *src, int j, int mode)
+{
+  int	i;
+
+  i = 0;
+  while (src[j])
+    {
+      dest[i] = src[j];
+      i++;
       j++;
     }
-  str[j] = 0;
-  printf("sortie %s\n", buff);
-  printf("is_there_a_n -> 0\n");
+  dest[i] = 0;
+}
+
+int	is_there_a_n(char *str, char *tmp, char *buff)
+{
+  int	i;
+
+  i = 0;
+  while (str[i])
+    {
+      if (str[i] == 10)
+	{
+	  my_strcpy(buff, str + i + 1, 0, 0);
+	  str[i] = 0;
+	  return (1);
+	}
+      i++;
+    }
   return (0);
 }
 
-char	*my_realloc(char *str)
+char	*my_realloc(char *str, char *buffer)
 {
   int	i;
   char	*new_str;
+  int	j;
 
-  while (str[i++]);
-  if ((new_str = malloc(i + READ_SIZE)) == NULL)
+  j = 0;
+  i = -1;
+  while (str[++i] != 0);
+  if ((new_str = malloc(i + READ_SIZE + 2)) == NULL)
     return (NULL);
   i = 0;
   while (str[i])
@@ -66,25 +82,40 @@ char	*my_realloc(char *str)
       new_str[i] = str[i];
       i++;
     }
+  while (buffer[j])
+      new_str[i++] = buffer[j++];
+  new_str[i] = 0;
+  free(str);
+  return (new_str);
 }
 
 char	*get_next_line(const int fd)
 {
   char		*str;
-  static char	buff[READ_SIZE + 1];
+  static char	*buff = NULL;
+  char		tmp[READ_SIZE + 1];
   int		readed;
 
-  buff[READ_SIZE] = 0;
-  if ((str = malloc((READ_SIZE + 1) * sizeof(char))) == NULL)
+  if (!(tmp[READ_SIZE] = 0) && buff == NULL)
+      if ((buff = malloc((READ_SIZE + 1) * sizeof(char))) == NULL ||
+	  (buff[READ_SIZE] = 0) || (buff[0] = 0))
+	return (NULL);
+  if ((str = malloc(READ_SIZE + 1)) == NULL || (str[0] = 0))
     return (NULL);
-  str[0] = 0;
-  while ((readed = read(fd, buff, READ_SIZE)) > 1)
+  my_strcpy(str, buff, 0, 1);
+  if (push_back(buff) == 0)
+    return (str);
+  while (!is_there_a_n(str, tmp, buff))
     {
-      printf("buff = %s\n", buff);
-      printf("je passe\n");
-      if (is_there_a_n(str, buff) == 1)
-	break ;
-      my_realloc(str);
+      readed = read(fd, tmp, READ_SIZE);
+      tmp[readed] = 0;
+      str = my_realloc(str, tmp);
+      if (readed < 1 && str[0] != 0)
+	{
+	  return (str);
+	}
+      if (readed < 1 && str[0] == 0)
+	return (NULL);
     }
   return (str);
 }
